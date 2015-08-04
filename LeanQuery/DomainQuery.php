@@ -241,7 +241,7 @@ class DomainQuery
 	 * @throws InvalidArgumentException
 	 * @return Result
 	 */
-	public function getResult($alias)
+	public function getResult($alias, $limit = null, $offset = null)
 	{
 		if ($this->results === NULL) {
 			$relationshipFilter = array_keys($this->clauses->select);
@@ -250,8 +250,13 @@ class DomainQuery
 					$relationshipFilter[] = $this->relationshipTables[$filteredAlias][0];
 				}
 			}
+
+			$fluent = $this->createFluent();
+			if ($limit) $fluent->limit($limit);
+			if ($offset) $fluent->offset($offset);
+
 			$this->results = $this->hydrator->buildResultsGraph(
-				$this->createFluent()->execute()->setRowClass(null)->fetchAll(),
+				$fluent->execute()->setRowClass(null)->fetchAll(),
 				$this->hydratorMeta,
 				$relationshipFilter
 			);
@@ -265,12 +270,12 @@ class DomainQuery
 	/**
 	 * @return Entity[]
 	 */
-	public function getEntities()
+	public function getEntities($limit = null, $offset = null)
 	{
 		if ($this->entities === NULL) {
 			$entities = array();
 			$entityClass = $this->clauses->from['entityClass'];
-			$result = $this->getResult($this->clauses->from['alias']);
+			$result = $this->getResult($this->clauses->from['alias'], $limit, $offset);
 			foreach ($result as $key => $row) {
 				$entities[] = $entity = $this->entityFactory->createEntity($entityClass, new Row($result, $key));
 				$entity->makeAlive($this->entityFactory, $this->connection, $this->mapper);
