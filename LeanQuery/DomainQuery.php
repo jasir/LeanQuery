@@ -279,6 +279,7 @@ class DomainQuery
 			foreach ($result as $key => $row) {
 				$entities[] = $entity = $this->entityFactory->createEntity($entityClass, new Row($result, $key));
 				$entity->makeAlive($this->entityFactory, $this->connection, $this->mapper);
+				$entity->cleanReferencingRowsCache();
 			}
 			$this->entities = $this->entityFactory->createCollection($entities);
 		}
