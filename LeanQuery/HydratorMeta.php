@@ -75,7 +75,8 @@ class HydratorMeta
 	public function addPrimaryKey($table, $primaryKey)
 	{
 		if (array_key_exists($table, $this->primaryKeysByTables)) {
-			throw new InvalidArgumentException;
+			//throw new InvalidArgumentException("addPrimaryKey: table:" . $table .'keys'. print_r($this->primaryKeysByTables, true));
+			return;
 		}
 		$this->primaryKeysByTables[$table] = $primaryKey;
 	}
@@ -97,7 +98,8 @@ class HydratorMeta
 	public function addRelationship($alias, $relationship)
 	{
 		if (array_key_exists($alias, $this->relationships)) {
-			throw new InvalidArgumentException;
+			//throw new InvalidArgumentException;
+			return;
 		}
 		$this->relationships[$alias] = $relationship instanceof Relationship ? $relationship : Relationship::createFromString($relationship);
 	}
