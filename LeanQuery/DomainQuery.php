@@ -276,8 +276,10 @@ class DomainQuery
 			$entities = array();
 			$entityClass = $this->clauses->from['entityClass'];
 			$result = $this->getResult($this->clauses->from['alias'], $limit, $offset);
+			$primaryKey = $this->mapper->getPrimaryKey($this->mapper->getTable($entityClass));
 			foreach ($result as $key => $row) {
-				$entities[] = $entity = $this->entityFactory->createEntity($entityClass, new Row($result, $key));
+				$entity = $this->entityFactory->createEntity($entityClass, new Row($result, $key));
+				$entities[$entity->{$primaryKey}] = $entity;
 				$entity->makeAlive($this->entityFactory, $this->connection, $this->mapper);
 				$entity->cleanReferencingRowsCache();
 			}
